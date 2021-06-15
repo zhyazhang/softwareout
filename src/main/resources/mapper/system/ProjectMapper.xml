@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjm.softwareout.system.dao.ProjectMapper">
+
+    <insert id="insert" parameterType="com.wjm.softwareout.system.entity.Project" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into sys_project (id, title, introduction, state, remark, sendid, receiveid)
+        values (#{id}, #{title}, #{introduction}, #{state}, #{remark}, #{sendid}, #{receiveid})
+    </insert>
+
+
+    <resultMap id="projectMap" type="com.wjm.softwareout.system.entity.Project">
+        <id column="pid" property="id"/>
+        <result column="title" property="title"/>
+        <result column="introduction" property="introduction"/>
+        <result column="state" property="state"/>
+        <result column="remark" property="remark"/>
+        <result column="receiveid" property="receiveid"/>
+        <result column="sendname" property="sendname"/>
+        <result column="sendid" property="sendid"/>
+        <result column="receivename" property="receivename"/>
+        <result column="complete" property="complete"/>
+        <collection property="projectFileArray" javaType="java.util.List" ofType="string">
+            <result column="path"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="selectProjectsByParams" parameterType="com.wjm.softwareout.system.vo.ProjectVo" resultMap="projectMap">
+        SELECT p.id pid,
+        p.title title,
+        p.introduction introduction,
+        p.state state,
+        p.remark remark,
+        p.sendid sendid,
+        p.receiveid receiveid,
+        su.name sendname,
+        ru.name receivename,
+        p.complete complete,
+        pf.path path
+        FROM sys_project p
+        LEFT JOIN sys_project_file pf ON p.id = pf.proid
+        LEFT JOIN sys_user su on p.sendid = su.id
+        LEFT JOIN sys_user ru on p.receiveid =ru.id
+        GROUP BY pid
+        having 1=1
+
+        <!--根据项目id查询-->
+        <if test="id != null and id !=0 and id !=''">
+            and pid=#{id}
+        </if>
+        <if test="state != null and state !=0 and state !=''">
+            and state=#{state} and ISNULL(receiveid)
+        </if>
+        <if test="sendid != null and sendid !=0 and sendid != ''">
+            and p.sendid = #{sendid}
+        </if>
+        <if test="receiveid != null and receiveid !=0 and receiveid != ''">
+            and p.receiveid = #{receiveid}
+        </if>
+        <!--根据项目名模糊查询-->
+        <if test="title != null and title != ''">
+            and p.title like concat("%",#{title},"%")
+        </if>
+
+
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from sys_project
+        where id = #{id}
+    </delete>
+
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wjm.softwareout.system.entity.Project">
+        update sys_project
+        <trim prefix="set" suffixOverrides=",">
+            <if test="title !=null and title !=''">
+                title = #{title},
+            </if>
+            <if test="introduction !=null and introduction !=''">
+                introduction = #{introduction},
+            </if>
+            <if test="remark !=null and remark !=''">
+                remark = #{remark},
+            </if>
+            <if test="complete !=null and complete !=''">
+                complete = #{complete},
+            </if>
+            <if test="state !=null and state !='' and state!= 0">
+                state = #{state},
+            </if>
+            <if test="receiveid !=null and receiveid !='' and receiveid != 0">
+                receiveid = #{receiveid},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <select id="projectCount" resultType="int">
+        select count(id)
+        from sys_project
+    </select>
+    <select id="projectUnReceiveCount" resultType="int">
+        select count(id)
+        from sys_project
+        where ISNULL(receiveid)
+    </select>
+
+
+</mapper>

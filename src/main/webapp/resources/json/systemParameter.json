@@ -1,0 +1,16 @@
+{
+	"cmsName": "Software Outsourcing Project",
+	"version": "v1.0",
+	"author": "",
+	"homePage": "index.html",
+	"framework": "layui-2.4.5",
+	"feature": "",
+	"server": "windows",
+	"dataBase": "8.00.2039",
+	"maxUpload": 1024,
+	"userRights": "超级管理员",
+	"description": "Software Outsourcing Project",
+	"powerby": "Software Outsourcing Project",
+	"record": "",
+	"keywords": ""
+}

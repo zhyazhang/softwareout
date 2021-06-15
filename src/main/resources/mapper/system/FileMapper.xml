@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjm.softwareout.system.dao.FileMapper">
+
+    <insert id="insert" parameterType="com.wjm.softwareout.system.entity.ProjectFile" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into sys_project_file (id, path, type, proid)
+        values (#{id}, #{path}, #{type}, #{proid})
+    </insert>
+
+    <delete id="deleteFileByProjectID" parameterType="java.lang.Integer">
+        delete
+        from sys_project_file
+        where proid = #{id}
+    </delete>
+
+    <select id="getFilePathByProjectID" parameterType="java.lang.Integer" resultType="string">
+        SELECT path
+        from sys_project_file
+        where proid = #{id}
+    </select>
+
+    <select id="getSendFilePathByProjectID" parameterType="java.lang.Integer"
+            resultType="com.wjm.softwareout.system.entity.ProjectFile">
+        SELECT *
+        from sys_project_file
+        where proid = #{id}
+          and type = 1
+    </select>
+
+
+</mapper>
